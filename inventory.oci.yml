@@ -1,3 +1,16 @@
 plugin: oracle.oci.oci
+
+# From all regions
 regions: all
-fetch_db_hosts: true
+
+#Get form Howie compartment
+compartments:
+- compartment_ocid: ocid1.compartment.oc1..aaaaaaaaqhbzavhpwjjlcf43lgkjhhz2qbztfh6xbav24x7kfaxrtxvmgyra
+  fetch_hosts_from_subcompartments: false
+
+#Fetch Compute
+fetch_compute_hosts: True
+
+#Group hosts based on AD
+keyed_groups:
+  - key: availability_domain
