@@ -10,3 +10,10 @@ compartments:
 
 #Fetch Compute
 fetch_compute_hosts: True
+
+# Enable Cache
+cache: yes
+cache_plugin: jsonfile
+cache_timeout: 7200
+cache_connection: /tmp/oci-cache
+cache_prefix: oci_
