@@ -3,20 +3,20 @@
   hosts: tag_app=webapp
   become: yes
   vars_files:
-    - "config_file_{{ ansible_distribution }}.yml"
+    - "playbooks/config_file_{{ ansible_facts['distribution'] }}.yml"
 
   tasks:
     - name: update Oracle Linux
       yum:
         name: '*'
         state: latest
-      when: ansible_distribution == "CentOS"
+      when: ansible_distribution == "OracleLinux"
 
     - name: install "{{ utilities }}" on Oracle Linux
       yum:
         name: "{{ utilities }}"
         state: latest
-      when: ansible_distribution == "CentOS"
+      when: ansible_distribution == "OracleLinux"
 
     - name: install "{{ utilities }}" on Ubuntu
       ansible.builtin.apt:
@@ -28,7 +28,7 @@
       yum:
         name: "{{ services }}"
         state: latest
-      when: ansible_distribution == "CentOS"
+      when: ansible_distribution == "OracleLinux"
  
     - name: install "{{ services }}" on Ubuntu
       ansible.builtin.apt:
@@ -51,7 +51,7 @@
         state: started
         enabled: yes
       with_items: "{{ services }}"
-      when: ansible_distribution == "CentOS"
+      when: ansible_distribution == "OracleLinux"
     
     - name: enable access to ports defined on Ubuntu
       community.general.ufw:
@@ -68,4 +68,4 @@
         destination_port: "{{ item }}"
         jump: ACCEPT
       with_items: "{{ ports }}"
-      when: ansible_distribution == "CentOS"
+      when: ansible_distribution == "OracleLinux"
