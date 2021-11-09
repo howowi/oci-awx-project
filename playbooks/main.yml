@@ -3,7 +3,7 @@
   hosts: tag_app=webapp
   become: yes
   vars_files:
-    - "config_file_{{ ansible_facts['distribution'] }}.yml"
+    - "config_file_{{ ansible_distribution }}.yml"
 
   tasks:
     - name: install "{{ utilities }}" on Oracle Linux
@@ -11,28 +11,28 @@
         name: "{{ utilities }}"
         state: latest
         update_cache: yes
-      when: ansible_facts['distribution'] == "CentOS"
+      when: ansible_distribution == "CentOS"
 
     - name: install "{{ utilities }}" on Ubuntu
       ansible.builtin.apt:
         name: "{{ utilities }}"
         state: latest
         update_cache: yes
-      when: ansible_facts['distribution'] == "Ubuntu"
+      when: ansible_distribution == "Ubuntu"
 
     - name: install "{{ services }}" on Oracle Linux
       ansible.builtin.yum:
         name: "{{ services }}"
         state: latest
         update_cache: yes
-      when: ansible_facts['distribution'] == "CentOS"
+      when: ansible_distribution == "CentOS"
  
     - name: install "{{ services }}" on Ubuntu
       ansible.builtin.apt:
         name: "{{ services }}"
         state: latest
         update_cache: yes
-      when: ansible_facts['distribution'] == "Ubuntu"    
+      when: ansible_distribution == "Ubuntu"    
 
     - name: enable all the services on Ubuntu
       ansible.builtin.service:
@@ -40,7 +40,7 @@
         state: started
         enabled: yes
       with_items: "{{ services }}"
-      when: ansible_facts['distribution'] == "Ubuntu"
+      when: ansible_distribution == "Ubuntu"
 
     - name: enable all the services on Oracle Linux
       ansible.builtin.service:
@@ -48,7 +48,7 @@
         state: started
         enabled: yes
       with_items: "{{ services }}"
-      when: ansible_facts['distribution'] == "CentOS"
+      when: ansible_distribution == "CentOS"
     
     - name: enable access to ports defined on Ubuntu
       community.general.ufw:
@@ -56,7 +56,7 @@
         port: "{{ item }}"
         proto: tcp
       with_items: "{{ ports }}"
-      when: ansible_facts['distribution'] == "Ubuntu"
+      when: ansible_distribution == "Ubuntu"
 
     - name: enable access to ports defined on Oracle Linux
       ansible.builtin.iptables:
@@ -65,4 +65,4 @@
         destination_port: "{{ item }}"
         jump: ACCEPT
       with_items: "{{ ports }}"
-      when: ansible_facts['distribution'] == "CentOS"
+      when: ansible_distribution == "CentOS"
