@@ -7,7 +7,6 @@ services:
 utilities:
   - telnet
   - curl
-  - bind-utils
 
 #List down the ports to be opened on ec2_devops
 ports:

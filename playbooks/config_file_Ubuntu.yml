@@ -7,7 +7,6 @@ services:
 utilities:
   - telnet
   - curl
-  - dnsutils
 
 #List down the ports to be opened on instance
 ports:
