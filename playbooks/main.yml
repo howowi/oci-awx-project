@@ -1,41 +1,41 @@
 ---
 - name: Install application on VMs
-  hosts: ec2
+  hosts: instance
   become: yes
   vars_files:
     - "config_file_{{ ansible_facts['distribution'] }}.yml"
 
   tasks:
     - name: install "{{ utilities }}" on RedHat
-      yum:
+      ansible.builtin.yum:
         name: "{{ utilities }}"
         state: latest
         update_cache: yes
       when: ansible_facts['distribution'] == "RedHat"
 
     - name: install "{{ utilities }}" on Ubuntu
-      apt:
+      ansible.builtin.apt:
         name: "{{ utilities }}"
         state: latest
         update_cache: yes
       when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: install "{{ services }}" on RedHat
-      yum:
+      ansible.builtin.yum:
         name: "{{ services }}"
         state: latest
         update_cache: yes
       when: ansible_facts['distribution'] == "RedHat"
  
     - name: install "{{ services }}" on Ubuntu
-      apt:
+      ansible.builtin.apt:
         name: "{{ services }}"
         state: latest
         update_cache: yes
       when: ansible_facts['distribution'] == "Ubuntu"    
 
     - name: enable all the services on Ubuntu
-      service:
+      ansible.builtin.service:
         name: "{{ item }}"
         state: started
         enabled: yes
@@ -43,7 +43,7 @@
       when: item != "mysql-server" and ansible_facts['distribution'] == "Ubuntu"
 
     - name: enable mysql on Ubuntu
-      service:
+      ansible.builtin.service:
         name: mysql
         state: started
         enabled: yes
@@ -51,7 +51,7 @@
       when: item == "mysql-server" and ansible_facts['distribution'] == "Ubuntu"
 
     - name: enable all the services on RedHat
-      service:
+      ansible.builtin.service:
         name: "{{ item }}"
         state: started
         enabled: yes
@@ -59,7 +59,7 @@
       when: item != "mariadb-server" and ansible_facts['distribution'] == "RedHat"
 
     - name: enable mysql on RedHat
-      service:
+      ansible.builtin.service:
         name: mariadb
         state: started
         enabled: yes
@@ -67,7 +67,7 @@
       when: item == "mariadb-server" and ansible_facts['distribution'] == "RedHat"
     
     - name: enable access to ports defined on Ubuntu
-      ufw:
+      community.general.ufw:
         rule: allow
         port: "{{ item }}"
         proto: tcp
@@ -75,7 +75,7 @@
       when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: enable access to ports defined on RedHat
-      iptables:
+      ansible.builtin.iptables:
         chain: INPUT
         protocol: tcp
         destination_port: "{{ item }}"

@@ -10,7 +10,3 @@ compartments:
 
 #Fetch Compute
 fetch_compute_hosts: True
-
-#Group hosts based on AD
-keyed_groups:
-  - key: availability_domain

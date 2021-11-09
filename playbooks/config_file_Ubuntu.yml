@@ -1,18 +1,15 @@
 ---
-#List down the packages to be installed on ec2_devops here
+#List down the packages to be installed on instance here
 
 services:
   - apache2
-  - tomcat9
-  - mysql-server
   
 utilities:
   - telnet
   - curl
   - dnsutils
-  - openjdk-11-jdk
 
-#List down the ports to be opened on ec2_devops
+#List down the ports to be opened on instance
 ports:
   - '80'
   - '8080'
