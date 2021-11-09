@@ -69,4 +69,4 @@
       when: ansible_facts['distribution'] == "OracleLinux"
 
     - name: reload firewalld
-      ansible.builtin.shell: firewall-cmd firewall-cmd --reload
+      ansible.builtin.shell: firewall-cmd --reload
