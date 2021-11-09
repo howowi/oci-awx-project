@@ -60,10 +60,10 @@
       when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: enable access to ports defined on Oracle Linux
-      ansible.builtin.iptables:
-        chain: INPUT
-        protocol: tcp
-        destination_port: "{{ item }}"
-        jump: ACCEPT
+      ansible.posix.firewalld:
+        zone: public
+        port: "{{ item }}"
+        permanent: yes
+        state: enabled
       with_items: "{{ ports }}"
       when: ansible_facts['distribution'] == "OracleLinux"
