@@ -2,8 +2,6 @@
 - name: Install application on VMs
   hosts: tag_app=webapp
   become: yes
-  vars_files:
-    - "playbooks/config_file_OracleLinux.yml"
 
   tasks:
     - name: update Oracle Linux
