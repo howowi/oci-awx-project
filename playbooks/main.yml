@@ -3,39 +3,39 @@
   hosts: tag_app=webapp
   become: yes
   vars_files:
-    - "playbooks/config_file_{{ ansible_facts['distribution'] }}.yml"
+    - "playbooks/config_file_OracleLinux.yml"
 
   tasks:
     - name: update Oracle Linux
       yum:
         name: '*'
         state: latest
-      when: ansible_distribution == "OracleLinux"
+      when: ansible_facts['distribution'] == "OracleLinux"
 
     - name: install "{{ utilities }}" on Oracle Linux
       yum:
         name: "{{ utilities }}"
         state: latest
-      when: ansible_distribution == "OracleLinux"
+      when: ansible_facts['distribution'] == "OracleLinux"
 
     - name: install "{{ utilities }}" on Ubuntu
       ansible.builtin.apt:
         name: "{{ utilities }}"
         state: latest
-      when: ansible_distribution == "Ubuntu"
+      when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: install "{{ services }}" on Oracle Linux
       yum:
         name: "{{ services }}"
         state: latest
-      when: ansible_distribution == "OracleLinux"
+      when: ansible_facts['distribution'] == "OracleLinux"
  
     - name: install "{{ services }}" on Ubuntu
       ansible.builtin.apt:
         name: "{{ services }}"
         state: latest
         update_cache: yes
-      when: ansible_distribution == "Ubuntu"    
+      when: ansible_facts['distribution'] == "Ubuntu"    
 
     - name: enable all the services on Ubuntu
       ansible.builtin.service:
@@ -43,7 +43,7 @@
         state: started
         enabled: yes
       with_items: "{{ services }}"
-      when: ansible_distribution == "Ubuntu"
+      when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: enable all the services on Oracle Linux
       ansible.builtin.service:
@@ -51,7 +51,7 @@
         state: started
         enabled: yes
       with_items: "{{ services }}"
-      when: ansible_distribution == "OracleLinux"
+      when: ansible_facts['distribution'] == "OracleLinux"
     
     - name: enable access to ports defined on Ubuntu
       community.general.ufw:
@@ -59,7 +59,7 @@
         port: "{{ item }}"
         proto: tcp
       with_items: "{{ ports }}"
-      when: ansible_distribution == "Ubuntu"
+      when: ansible_facts['distribution'] == "Ubuntu"
 
     - name: enable access to ports defined on Oracle Linux
       ansible.builtin.iptables:
@@ -68,4 +68,4 @@
         destination_port: "{{ item }}"
         jump: ACCEPT
       with_items: "{{ ports }}"
-      when: ansible_distribution == "OracleLinux"
+      when: ansible_facts['distribution'] == "OracleLinux"
