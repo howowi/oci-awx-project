@@ -1,17 +1,17 @@
 ---
 - name: Install application on VMs
-  hosts: instance
+  hosts: tag_app=webapp
   become: yes
   vars_files:
     - "config_file_{{ ansible_facts['distribution'] }}.yml"
 
   tasks:
-    - name: install "{{ utilities }}" on RedHat
+    - name: install "{{ utilities }}" on Oracle Linux
       ansible.builtin.yum:
         name: "{{ utilities }}"
         state: latest
         update_cache: yes
-      when: ansible_facts['distribution'] == "RedHat"
+      when: ansible_facts['distribution'] == "CentOS"
 
     - name: install "{{ utilities }}" on Ubuntu
       ansible.builtin.apt:
@@ -20,12 +20,12 @@
         update_cache: yes
       when: ansible_facts['distribution'] == "Ubuntu"
 
-    - name: install "{{ services }}" on RedHat
+    - name: install "{{ services }}" on Oracle Linux
       ansible.builtin.yum:
         name: "{{ services }}"
         state: latest
         update_cache: yes
-      when: ansible_facts['distribution'] == "RedHat"
+      when: ansible_facts['distribution'] == "CentOS"
  
     - name: install "{{ services }}" on Ubuntu
       ansible.builtin.apt:
@@ -40,31 +40,15 @@
         state: started
         enabled: yes
       with_items: "{{ services }}"
-      when: item != "mysql-server" and ansible_facts['distribution'] == "Ubuntu"
+      when: ansible_facts['distribution'] == "Ubuntu"
 
-    - name: enable mysql on Ubuntu
-      ansible.builtin.service:
-        name: mysql
-        state: started
-        enabled: yes
-      with_items: "{{ services }}"
-      when: item == "mysql-server" and ansible_facts['distribution'] == "Ubuntu"
-
-    - name: enable all the services on RedHat
+    - name: enable all the services on Oracle Linux
       ansible.builtin.service:
         name: "{{ item }}"
         state: started
         enabled: yes
       with_items: "{{ services }}"
-      when: item != "mariadb-server" and ansible_facts['distribution'] == "RedHat"
-
-    - name: enable mysql on RedHat
-      ansible.builtin.service:
-        name: mariadb
-        state: started
-        enabled: yes
-      with_items: "{{ services }}"
-      when: item == "mariadb-server" and ansible_facts['distribution'] == "RedHat"
+      when: ansible_facts['distribution'] == "CentOS"
     
     - name: enable access to ports defined on Ubuntu
       community.general.ufw:
@@ -74,11 +58,11 @@
       with_items: "{{ ports }}"
       when: ansible_facts['distribution'] == "Ubuntu"
 
-    - name: enable access to ports defined on RedHat
+    - name: enable access to ports defined on Oracle Linux
       ansible.builtin.iptables:
         chain: INPUT
         protocol: tcp
         destination_port: "{{ item }}"
         jump: ACCEPT
       with_items: "{{ ports }}"
-      when: ansible_facts['distribution'] == "RedHat"
+      when: ansible_facts['distribution'] == "CentOS"
