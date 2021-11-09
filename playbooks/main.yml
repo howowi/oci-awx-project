@@ -6,6 +6,11 @@
     - "config_file_{{ ansible_distribution }}.yml"
 
   tasks:
+    - name: update Oracle Linux
+      ansible.builtin.yum:
+        name: '*'
+        state: latest
+
     - name: install "{{ utilities }}" on Oracle Linux
       ansible.builtin.yum:
         name: "{{ utilities }}"
