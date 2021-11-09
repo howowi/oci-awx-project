@@ -1,0 +1,19 @@
+---
+#List down the packages to be installed on ec2_devops here
+
+services:
+  - httpd
+  - tomcat
+  - mariadb-server
+  
+utilities:
+  - telnet
+  - curl
+  - bind-utils
+  - java-11-openjdk
+
+#List down the ports to be opened on ec2_devops
+ports:
+  - '80'
+  - '8080'
+  - '3066'

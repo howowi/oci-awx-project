@@ -1,0 +1,84 @@
+---
+- name: Install application on VMs
+  hosts: ec2
+  become: yes
+  vars_files:
+    - "config_file_{{ ansible_facts['distribution'] }}.yml"
+
+  tasks:
+    - name: install "{{ utilities }}" on RedHat
+      yum:
+        name: "{{ utilities }}"
+        state: latest
+        update_cache: yes
+      when: ansible_facts['distribution'] == "RedHat"
+
+    - name: install "{{ utilities }}" on Ubuntu
+      apt:
+        name: "{{ utilities }}"
+        state: latest
+        update_cache: yes
+      when: ansible_facts['distribution'] == "Ubuntu"
+
+    - name: install "{{ services }}" on RedHat
+      yum:
+        name: "{{ services }}"
+        state: latest
+        update_cache: yes
+      when: ansible_facts['distribution'] == "RedHat"
+ 
+    - name: install "{{ services }}" on Ubuntu
+      apt:
+        name: "{{ services }}"
+        state: latest
+        update_cache: yes
+      when: ansible_facts['distribution'] == "Ubuntu"    
+
+    - name: enable all the services on Ubuntu
+      service:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      with_items: "{{ services }}"
+      when: item != "mysql-server" and ansible_facts['distribution'] == "Ubuntu"
+
+    - name: enable mysql on Ubuntu
+      service:
+        name: mysql
+        state: started
+        enabled: yes
+      with_items: "{{ services }}"
+      when: item == "mysql-server" and ansible_facts['distribution'] == "Ubuntu"
+
+    - name: enable all the services on RedHat
+      service:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      with_items: "{{ services }}"
+      when: item != "mariadb-server" and ansible_facts['distribution'] == "RedHat"
+
+    - name: enable mysql on RedHat
+      service:
+        name: mariadb
+        state: started
+        enabled: yes
+      with_items: "{{ services }}"
+      when: item == "mariadb-server" and ansible_facts['distribution'] == "RedHat"
+    
+    - name: enable access to ports defined on Ubuntu
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      with_items: "{{ ports }}"
+      when: ansible_facts['distribution'] == "Ubuntu"
+
+    - name: enable access to ports defined on RedHat
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_port: "{{ item }}"
+        jump: ACCEPT
+      with_items: "{{ ports }}"
+      when: ansible_facts['distribution'] == "RedHat"
