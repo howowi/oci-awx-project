@@ -61,6 +61,21 @@
         state: enabled
       with_items: "{{ ports }}"
       when: ansible_facts['distribution'] == "OracleLinux"
+      register: firewall_result
 
     - name: reload firewalld
       ansible.builtin.shell: firewall-cmd --reload
+      when: ansible_facts['distribution'] == "OracleLinux" and firewall_result.changed
+
+    - name: Create index.html if not exist
+      ansible.builtin.file:
+        path: /var/www/html/index.html
+        state: touch
+        mode: u=rw,g=r,o=r
+
+    - name: Write HTML content
+      blockinfile:
+        path: /var/www/html/index.html
+        block: |
+          <h1>This is {{ ansible_hostname }}</h1>
+          <p>You have installed a webserver successfully</p>
