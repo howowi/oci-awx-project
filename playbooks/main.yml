@@ -4,12 +4,6 @@
   become: yes
 
   tasks:
-    - name: update Oracle Linux
-      yum:
-        name: '*'
-        state: latest
-      when: ansible_facts['distribution'] == "OracleLinux"
-
     - name: install "{{ utilities }}" on Oracle Linux
       yum:
         name: "{{ utilities }}"
