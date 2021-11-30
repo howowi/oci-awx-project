@@ -79,4 +79,5 @@
         marker: "<!-- {mark} ANSIBLE MANAGED BLOCK -->"
         block: |
           <h1>This is {{ ansible_hostname }}</h1>
+          <h2>IP Address: {{ ansible_default_ipv4.address }}</h2>
           <p>You have installed a webserver successfully</p>
